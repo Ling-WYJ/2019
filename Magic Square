@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main()
+{  int n;
+   int count=1;
+   int i,j;
+   scanf("%d",&n);
+
+   int a[103][103];
+   for(i=1;i<=n;i++)
+   {for(j=1;j<=n;j++)
+      a[i][j]=102;
+   }
+
+
+   i=1;
+   j=(n+1)/2;
+   a[i][j]=1;
+   for(count=2;count<=n*n;count++){
+
+   //j
+    if(j!=n){j++;}
+    else j=1;
+    //i
+     if(i==1)
+     {i=n;}
+     else
+        i--;
+
+   if(a[i][j]<count)
+   { if(j==1)
+       {j=n;
+        i=2;
+        a[i][j]=count;}
+
+        else
+      {
+
+      j--;
+       i=i+2;
+       a[i][j]=count;}
+
+   }
+else
+   a[i][j]=count;
+   }
+
+
+
+   for(i=1;i<=n;i++){
+       for(j=1;j<=n;j++){
+            printf("%4d\t ",a[i][j]);
+}
+printf("\n");
+}
+}
+
+
