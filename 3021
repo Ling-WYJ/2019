@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+int main()
+{
+    int p,T,s;
+    int i,j;
+    char c;
+    char a[201];
+    scanf("%d",&T);
+    getchar();
+    for(s=0;s<T;s++)
+   {
+    gets(a);
+    p=strlen(a);
+  for(i=0;i<p-1;i++)//选择排序
+
+  {
+    for(j=i+1;j<p;j++)
+
+        {
+        if(a[i]>='A'&&a[i]<='Z'&&a[j]>='A'&&a[j]<='Z')
+         {
+           if(a[i]>a[j])
+           {
+              c=a[i];
+              a[i]=a[j];
+              a[j]=c;
+           }
+         }
+        }
+  }
+printf("case #%d:\n",s);
+puts(a);
+ //if(s!=T-1)
+  //  printf("\n");
+}
+
+//system ("pause");
+
+}
