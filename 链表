@@ -1,6 +1,7 @@
 #include <iostream>
 #include <list>
 #include <iterator>
+#include <algorithm>
 using namespace std;
 
 void show_list(list<int> &ls)
@@ -23,25 +24,11 @@ int main()
     my_list.push_back(8);
     cout << "List:" << endl;
     show_list(my_list);
-    for (list<int>::iterator it = my_list.begin(); it != my_list.end(); it++)
-    {
-        if (*it == 5)
-        {
-            my_list.insert(it, 4);
-            break;
-        }
-    }
+    my_list.insert(find(my_list.begin(), my_list.end(), 5), 4);
     cout << "After insert 4:" << endl;
     show_list(my_list);
-    for (list<int>::iterator it = my_list.begin(); it != my_list.end(); it++)
-    {
-        if (*it == 6)
-        {
-            my_list.erase(it);
-            break;
-        }
-    }
-    cout << "After erase:" << endl;
+    my_list.erase(find(my_list.begin(), my_list.end(), 6));
+    cout << "After erase 6:" << endl;
     show_list(my_list);
     return 0;
 }
