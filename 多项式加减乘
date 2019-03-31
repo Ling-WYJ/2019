@@ -1,0 +1,222 @@
+#include <map>
+#include <iostream>
+#include <string>
+#include <iterator>
+
+template <typename T>
+class Polynomial
+{
+private:
+public:
+  void clear_zeros();
+  std::map<T, T> data;
+  Polynomial<T>();
+  ~Polynomial<T>();
+};
+template <typename T>//函数模板
+std::ostream &operator<<(std::ostream &os, const Polynomial<T> &p);
+template <typename T>
+std::istream &operator>>(std::istream &is, Polynomial<T> &p);
+template <typename T>
+Polynomial<T> operator+(const Polynomial<T> &left, const Polynomial<T> &right);
+template <typename T>
+Polynomial<T> operator-(const Polynomial<T> &left, const Polynomial<T> &right);
+template <typename T>
+Polynomial<T> operator*(const Polynomial<T> &left, const Polynomial<T> &right);
+template <typename T>
+Polynomial<T> operator*(const Polynomial<T> &left, const T &right);
+template <typename T>
+Polynomial<T>::Polynomial()
+{
+}
+
+template <typename T>
+Polynomial<T>::~Polynomial()
+{
+}
+template <typename T>
+void Polynomial<T>::clear_zeros()
+{
+  for (typename std::map<T, T>::iterator it = this->data.begin();
+    it != this->data.end();)
+  {
+    if (it->second == 0)
+    {
+      this->data.erase(it++);
+    }
+    else
+    {
+      it++;
+    }
+  }
+}
+template <typename T>
+Polynomial<T> operator+(const Polynomial<T> &left, const Polynomial<T> &right)
+{
+  Polynomial<T> result;
+  for (typename std::map<T, T>::const_iterator it = left.data.begin();
+    it != left.data.end();
+    it++)
+  {
+    T index = it->first;
+    T coefficient = it->second;
+    if (result.data.find(index) == result.data.end())
+    {
+      result.data[index] = 0;
+    }
+    result.data[index] += coefficient;
+  }
+  for (typename std::map<T, T>::const_iterator it = right.data.begin();
+    it != right.data.end();
+    it++)
+  {
+    T index = it->first;
+    T coefficient = it->second;
+    if (result.data.find(index) == result.data.end())//没找到
+    {
+      result.data[index] = 0;
+    }
+    result.data[index] += coefficient;
+  }
+  result.clear_zeros();
+  return result;
+}
+template <typename T>
+Polynomial<T> operator-(const Polynomial<T> &left, const Polynomial<T> &right)
+{
+  return left + (right * (-1));//+重载后进行计算
+}
+template <typename T>
+Polynomial<T> operator*(const Polynomial<T> &left, const Polynomial<T> &right)//单项式乘法
+{
+  Polynomial<T> result;
+  for (typename std::map<T, T>::const_iterator it = left.data.begin();//线性迭代器
+    it != left.data.end();
+    it++)
+  {
+    for (typename std::map<T, T>::const_iterator jt = right.data.begin();
+      jt != right.data.end();
+      jt++)
+    {
+      T l_index = it->first;
+      T r_index = jt->first;
+      T l_coefficient = it->second;
+      T r_coefficient = jt->second;
+      T index = l_index + r_index;
+      T coefficient = l_coefficient * r_coefficient;
+      if (result.data.find(index) == result.data.end())
+      {
+        result.data[index] = 0;
+      }
+      result.data[index] += coefficient;
+    }
+  }
+  result.clear_zeros();
+  return result;
+}
+template <typename T>
+Polynomial<T> operator*(const Polynomial<T> &left, const T &right)//单乘多
+{
+  Polynomial<T> result(left);
+  for (typename std::map<T, T>::const_iterator it = left.data.begin();
+    it != left.data.end();
+    it++)
+  {
+    T index = it->first;
+    result.data[index] *= right;
+  }
+  result.clear_zeros();
+  return result;
+}
+template <typename T>
+std::ostream &operator<<(std::ostream &os, const Polynomial<T> &p)//重载输出
+{
+  bool printed = false;
+  for (typename std::map<T, T>::const_reverse_iterator it = p.data.rbegin();
+    it != p.data.rend();
+    it++)
+  {
+    T index = it->first;
+    T coefficient = it->second;
+    if (it != p.data.rbegin())
+    {
+      if (coefficient > 0)
+      {
+        os << '+';
+      }
+    }
+    if (coefficient != 0)
+    {
+      printed = true;
+      if (coefficient == -1 && index != 0)
+      {
+        os << '-';
+      }
+      else if (coefficient != 1 || index == 0)
+      {
+        os << coefficient;
+      }
+      if (index != 0)
+      {
+        os << "X";
+        if (index != 1)
+        {
+          os << '^' << index;
+        }
+      }
+    }
+  }
+  if (!printed)
+  {
+    os << "0";
+  }
+  return os;
+}
+template <typename T>
+std::istream &operator>>(std::istream &is, Polynomial<T> &p)//重载输入
+{
+  T coefficent, index;
+  for (is >> coefficent >> index;
+    coefficent != 0 || index != 0;
+    is >> coefficent >> index)
+  {
+    if (p.data.find(index) == p.data.end())
+    {
+      p.data[index] = coefficent;
+    }
+    else
+    {
+      p.data[index] += coefficent;
+    }
+  }
+  p.clear_zeros();
+  return is;
+}
+
+int main()
+{
+  using std::cin;
+  using std::cout;
+  using std::endl;
+  Polynomial<int> a;
+  Polynomial<int> b;
+  Polynomial<int> c;
+  char operator_char;
+  cin >> operator_char >> a >> b;
+  switch (operator_char)
+  {
+  case '+':
+    c = a + b;
+    break;
+  case '-':
+    c = a - b;
+    break;
+  case '*':
+    c = a * b;
+    break;
+  default:
+    break;
+  }
+  cout << c << endl;
+  return 0;
+}
