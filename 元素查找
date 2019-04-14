@@ -1,0 +1,40 @@
+#include <iostream>
+#include <cstdlib>
+#include <sstream>
+#include <string>
+#include <algorithm>
+#include <vector>
+using namespace std;
+int main()
+{
+    string except[] = {"THE", "A", "AN", "OF", "FOR", "AND"};
+    string phrase;
+    while (getline(cin, phrase))
+    {
+        for (int i = 0; i < phrase.size(); i++)
+        {
+            phrase[i] = ::toupper(phrase[i]);
+            if (phrase[i] == '-')
+            {
+                phrase[i] = ' ';
+            }
+        }
+        vector<string> words;
+        stringstream ss(phrase);
+        string tmp;
+        while (getline(ss, tmp, ' '))
+        {
+            if (find(except, except + 6, tmp) == except + 6) // not in except[]
+            {
+                words.push_back(tmp);
+            }
+        }
+        ss.clear();
+        for (int i = 0; i < words.size(); i++)
+        {
+            cout << words[i][0];
+        }
+        cout << endl;
+    }
+    return 0;
+}
