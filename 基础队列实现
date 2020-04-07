@@ -1,58 +1,132 @@
-const int maxstack=100;
-typedef int type;
-class myquene
-{public:
-   myquene();
-   bool is_empty()const;
-   void append(const type &cjn);
-   void serve();
-   type retrieve();
-   bool full()const;
+#include<iostream>
+#include<list>
+#include <algorithm>
+#include <iterator>
+#include <stdio.h>
+#include <stdlib.h>
+using namespace std;
+
+enum  Error_code{underflow, overflow, success};
+const int maxqueue = 8; //  small value for testing
+
+template<class Queue_entry>
+class CirQueue {
+public:
+   CirQueue();
+   bool empty() const;
+   Error_code serve();
+   Error_code append(const Queue_entry &item);
+   Error_code retrieve(Queue_entry &item) const;
+   bool full() const;
+   int size() const;
    void clear();
- private:
-  int count;
-  type entry[maxstack];
-  int front,rear;
+   Error_code serve_and_retrieve(Queue_entry &item);
+private:
+   int count;
+   int front, rear;
+   Queue_entry entry[maxqueue];
 };
-myquene::myquene()
+
+template<class Queue_entry>
+CirQueue<Queue_entry>::CirQueue()
 {
   count=0;
+  rear=maxqueue-1;
   front=0;
-  rear=maxstack-1;
 }
-void myquene::append(const type &cjn)
+
+template<class Queue_entry>
+bool CirQueue<Queue_entry>::empty() const
+ {
+    return (count==0);
+ }
+
+template<class Queue_entry>
+Error_code CirQueue<Queue_entry>::serve()
 {
- rear=(rear+1)%maxstack;
- entry[rear]=cjn;
- count++;
+   if(count<=0)
+   return underflow;
+   count--;
+   front=(front+1)%maxqueue;
+   return success;
+
+
 }
-void myquene::serve()
-{count--;
- front=(front+1)%maxstack;
+
+template<class Queue_entry>
+Error_code CirQueue<Queue_entry>::append(const Queue_entry &item)
+{
+   if(count>=maxqueue)
+      return overflow;
+   rear=(rear+1)%maxqueue;
+   entry[rear]=item;
+   count++;
+   return success;
 }
-bool myquene::is_empty()const
-{if (count==0)
-    return true;
- return false;
+
+template<class Queue_entry>
+Error_code CirQueue<Queue_entry>::retrieve(Queue_entry &item) const
+{
+   if(count<0)
+      return underflow;
+   item=entry[front];
+   return success;
 }
-type myquene::retrieve()
-{return entry[front];
+
+template<class Queue_entry>
+bool CirQueue<Queue_entry>::full() const
+{
+   return (count==maxqueue);
 }
-bool myquene::full()const
-{if (count==maxstack)
-   return true;
- return false;
+
+template<class Queue_entry>
+int CirQueue<Queue_entry>::size() const
+{
+   return count;
 }
+
+template<class Queue_entry>
+void CirQueue<Queue_entry>::clear()
+{
+  count=0;
+  rear=maxqueue-1;
+  front=0;
+
+}
+
+template<class Queue_entry>
+Error_code CirQueue<Queue_entry>::serve_and_retrieve(Queue_entry &item)
+{
+   if(count<=0)
+   return underflow;
+   item=entry[front];
+   count--;
+   front=(front+1)%maxqueue;
+   return success;
+}
+
 int main()
 {
-  int a;
-  myquene cjn;
- while (scanf("%d",&a)&&a!=-1)
-   {cjn.append(a);
+   int n,i,item;
+   CirQueue<int> cirqueue;
+   cin>>n;
+   getchar();
+   for(i=0;i<n;i++)
+   {
+      cin>>item;
+      if(!cirqueue.full()){
+         cirqueue.append(item);
+      }
+      else
+      {
+         cout<<"This queue is overflow!"<<endl;
+         break;
+      }
+
    }
- while (!cjn.is_empty())
-    {printf("%d ",cjn.retrieve());
-     cjn.serve();
-}  
-return 0;
+   while(!cirqueue.empty())
+   {
+      cirqueue.serve_and_retrieve(item);
+      cout<<item<<" ";
+   }
 }
