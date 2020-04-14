@@ -1,0 +1,287 @@
+#include<iostream>
+#include<list>
+#include <algorithm>
+#include <iterator>
+#include <stdio.h>
+#include <stdlib.h>
+using namespace std;
+
+typedef int Node_entry;
+
+struct Node {
+	// data members
+	Node_entry entry;
+	Node *next;
+	// constructors 构造函数
+	Node( );
+	Node(Node_entry item, Node *add_on = NULL);
+};
+
+Node::Node()
+{
+   entry=0;
+   next=NULL;
+}
+Node::Node(Node_entry item, Node* add_on)
+{
+   entry=item;
+   next=add_on;
+}
+
+class CirLinkList
+{
+   public:
+          CirLinkList();
+          ~CirLinkList();
+
+          void find(Node_entry item,Node* &prev,Node* &cur);
+          void add(Node_entry item);
+          void add_from_head(Node_entry item);
+          void add_from_tail(Node_entry item);
+          void del(Node_entry item);
+
+          void find_m(Node* first,int m,Node*&prev,Node* &cur);
+          void del_m(Node* &node,int m);
+
+          void print();
+          int length();
+          Node* get_head();
+
+   private:
+          Node* Head;
+          Node* Tail;
+          int count;
+
+};
+
+CirLinkList::CirLinkList()
+{
+   Head=NULL;
+   Tail=NULL;
+   count=0;
+}
+
+CirLinkList::~CirLinkList()
+{
+   Node *temp=NULL;
+   while(Head!=NULL&&Head!=Tail)
+   {
+      temp=Head->next;
+      Head->next=temp->next;
+      delete(temp);
+      temp=NULL;
+
+   }
+   Head=NULL;
+   delete(Head);
+
+}
+
+ void CirLinkList::find(Node_entry item,Node* &prev,Node* &cur)
+ {
+    if(Head==NULL||Head->entry>=item)
+    {
+       prev=NULL;
+       cur=Head;
+    }
+    else
+    {
+       prev=Head;
+       cur=Head;
+       while(prev->next!=Head)
+       {
+          cur=prev->next;
+          if(cur->entry<item)
+          {
+             prev=cur;
+             cur=cur->next;
+          }
+          else
+          {
+             break;
+          }
+       }
+    }
+
+ }
+
+ void CirLinkList::add(Node_entry item)
+ {
+    Node* prev=NULL;
+    Node* cur=NULL;
+    find(item,prev,cur);
+    if(prev==NULL)
+    {
+       add_from_head(item);
+    }
+    else
+    {
+       Node *newPtr=new Node(item);
+       newPtr->next=prev->next;
+       prev->next=newPtr;
+       if(cur==Head)
+       {
+          Tail=newPtr;
+       }
+       count++;
+    }
+
+ }
+
+void CirLinkList::add_from_head(Node_entry item)
+{
+   Node* newPtr=new Node(item);
+   if(Head==NULL)
+   {
+      Head=newPtr;
+      Tail=newPtr;
+      Head->next=Head;
+   }
+   else
+   {
+      newPtr->next=Head;
+      Tail->next=newPtr;
+      Head=newPtr;
+   }
+   count++;
+}
+
+void CirLinkList::add_from_tail(Node_entry item)
+{
+   Node* newPtr=new Node(item);
+   if(Head==NULL)
+   {
+      Head=newPtr;
+      Tail=newPtr;
+      Head->next=Head;
+   }
+   else
+   {
+      newPtr->next=Head;
+      Tail->next=newPtr;
+      Tail=newPtr;
+   }
+   count++;
+}
+
+void
+ CirLinkList::del(Node_entry item)
+{
+   Node* prev=NULL;
+   Node* cur=NULL;
+   find(item,prev,cur);
+   if(cur!=NULL&&cur->entry==item)
+   {
+      if(Head->next==Head)
+      {
+         Head=NULL;
+         Tail=NULL;
+      }
+      else if(cur==Head)
+      {
+         Tail->next=Head->next;
+         Head=cur->next;
+      }
+      else
+      {
+         prev->next=cur->next;
+      }
+      delete(cur);
+      count--;
+   }
+   else
+   {
+      cout<<"This item is not in the CirLinkList"<<endl;
+   }
+
+}
+
+void CirLinkList::del_m(Node* &node,int m)
+{
+   Node* prev=NULL;
+   Node* cur=NULL;
+   find_m(node,m,prev,cur);
+   node=cur->next;
+   prev->next=cur->next;
+   if(cur==Head)
+   {
+      Head=cur->next;
+   }
+   if(cur==Tail)
+   {
+      Tail=prev;
+   }
+   cout<<cur->entry<<" ";
+   delete(cur);
+   count--;
+}
+
+void CirLinkList::find_m(Node* first,int m,Node* &prev,Node* &cur)
+{
+   cur=first;
+   for(int i=1;i<m;i++)
+   {
+    prev=cur;
+    cur=cur->next;
+   }
+}
+
+
+void CirLinkList::print()
+{
+  if(Head==NULL)
+  {
+    cout<<"This CirLinkList is empty!";
+  }
+  else
+  {
+  Node* prev=NULL;
+  Node* cur=NULL;
+
+  cur=Head;
+
+  for(int i=0;i<count;i++)
+  {
+    cout<<cur->entry;
+    prev=cur;
+    cur=cur->next;
+  }
+
+
+
+  }
+
+  /*cout<<Head->entry; */
+}
+
+int CirLinkList::length()
+{
+  return count;
+}
+
+ Node* CirLinkList::get_head()
+ {
+    return Head;
+ }
+
+int main()
+{
+   CirLinkList cirLinkList;
+   int m,n;
+   int data;
+   cin>>m>>n;
+   for(int i=0;i<m;i++)
+   {
+      cin>>data;
+      cirLinkList.add_from_tail(data);
+   }
+   Node* node=cirLinkList.get_head();
+   while(cirLinkList.length()>1)
+   {
+      cirLinkList.del_m(node,n);
+   }
+   cout<<endl;
+   cirLinkList.print();
+   return 0;
+}
+
