@@ -1,0 +1,78 @@
+#include<iostream>
+#include<queue>
+#include <algorithm>
+#include <iterator>
+#include <stdio.h>
+#include <stdlib.h>
+using namespace std;
+
+const int maxi=102;
+int map[maxi][maxi];
+int prio[4][2]={{1,0},{0,1},{-1,0},{0,-1}};
+int maxstep=0;
+int visited[maxi][maxi]={0};
+int row,col;
+struct p
+{
+   int x;
+   int y;
+   int step;
+   p(int a,int b,int c)
+   {
+      x=a;
+      y=b;
+      step=c;
+   }
+};
+queue<p> bfsq;
+void bfs(int x,int y)
+{
+   p point=p(x,y,1);
+   bfsq.push(point);
+   while(!bfsq.empty())
+   {
+     p point=bfsq.front();
+     int cur_x=point.x;
+     int cur_y=point.y;
+     bfsq.pop();
+     if(maxstep<point.step)
+     maxstep=point.step;
+
+
+   for(int i=0;i<4;i++)
+   {
+      int try_x=point.x+prio[i][0];
+      int try_y=point.y+prio[i][1];
+      if(try_x>-1&&try_x<row&&try_y>-1&&try_y<col&&visited[try_x][try_y]==0&&map[try_x][try_y]<map[cur_x][cur_y])
+      {
+         p pt=p(try_x,try_y,point.step+1);
+         bfsq.push(pt);
+
+      }
+
+   }
+}
+}
+
+int main()
+{
+
+   cin>>row>>col;
+   for(int i=0;i<row;i++)
+   {
+      for(int j=0;j<col;j++)
+      {
+         cin>>map[i][j];
+      }
+   }
+   for(int i=0;i<row;i++)
+   {
+      for(int j=0;j<col;j++)
+      {
+
+         bfs(i,j);
+
+      }
+   }
+   cout<<maxstep;
+}
