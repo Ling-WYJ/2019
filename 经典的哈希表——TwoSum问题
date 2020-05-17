@@ -151,7 +151,8 @@ int main()
 
         }
     }
-    if(num==0){
+    if(num==0)
+    {
         cout<<"None"<<endl;
     }
     return 0;
