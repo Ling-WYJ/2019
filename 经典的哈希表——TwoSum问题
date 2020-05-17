@@ -1,0 +1,158 @@
+#include<iostream>
+#include<queue>
+#include <algorithm>
+#include <iterator>
+#include <stdio.h>
+#include <stdlib.h>
+using namespace std;
+
+enum Error_code{not_present,overflow,duplicate_error,success};
+const int hash_size=10;
+
+class Key{
+    int key;
+public:
+Key(int x=0){
+    this->key=x;
+}
+    int the_key() const;
+
+};
+int Key::the_key() const{
+    return key;
+}
+
+class Record{
+    public:
+    operator Key(){
+        return Key(this->key);
+    }
+    Record(int x=0,int y=0){
+        this->key=x;
+        this->other=y;
+    }
+    int the_key() const;
+    int the_other() const;
+    private:
+    int key;
+    int other;
+};
+int Record::the_key() const{
+    return key;
+}
+int Record::the_other() const{
+    return other;
+}
+bool operator !=(const Record &x, const Record &y){
+    if(x.the_key()!=y.the_other())
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+    
+}
+bool operator == (const Record &x,const Record &y)
+{
+ if(x.the_key()==y.the_other())
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+int hash_fun(const Record &new_entry)
+{
+    return new_entry.the_key()%hash_size;
+}
+int hash_fun(const Key &new_entry)
+{
+    return new_entry.the_key()%hash_size;
+}
+class Hash_table{
+public:
+void clear();
+Error_code insert(const Record &new_entry);
+Error_code retrieve(const Key &target,Record &found) const;
+private:
+Record table[hash_size];
+};
+Error_code Hash_table::insert(const Record &new_entry)
+{
+    Error_code result=success;
+    int probe_count,increment,probe;
+    probe=hash_fun(new_entry);
+    probe_count=0;
+    increment=1;
+    while(table[probe]!=0&&table[probe]!=-1&&probe_count<(hash_size+1)/2)
+    {
+        probe_count++;
+        probe=(probe+increment)%hash_size;
+        increment+=2;
+    }
+    if(table[probe]==0)
+    table[probe]=new_entry;
+    if(table[probe]==-1)
+    table[probe]=new_entry;
+    else
+    {
+        result=overflow;
+    }
+    return result;
+    
+}
+Error_code Hash_table::retrieve(const Key &target,Record &found) const{
+    int probe_count,increment,probe;
+    probe=hash_fun(target);
+    probe_count=0;
+    increment=1;
+    while(table[probe]!=0&&table[probe].the_key()!=target.the_key()&&probe_count<(hash_size+1)/2){
+     probe_count++;
+     probe=(probe+increment)%hash_size;
+     increment+=2;
+    }
+    if(table[probe].the_key()==target.the_key()){
+        found=table[probe];
+        return success;
+    }
+    else return not_present;
+}
+
+int main()
+{
+    int k;
+    cin>>k;
+    int numbers[k];
+    for(int i=0;i<k;i++){
+        cin>>numbers[i];
+    }
+    int target=0;
+    cin>>target;
+    Hash_table myhash;
+    for(int i=0;i<10;i++)
+    {
+        myhash.insert(Record(numbers[i],i+1));
+    }
+    int num=0;
+    for(int i=0;i<k;i++)
+    {
+        int current_num=numbers[i];
+        int current_pos=i+1;
+        Record record;
+        Error_code result=myhash.retrieve(Key(target-current_num),record);
+        if(result==success&&record.the_other()>current_pos){
+            num++;
+            cout<<"["<<current_pos<<","<<record.the_other()<<"]"<<endl;
+
+        }
+    }
+    if(num==0){
+        cout<<"None"<<endl;
+    }
+    return 0;
+}
