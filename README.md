@@ -21,18 +21,24 @@ Output
 （4）如果不存在，则返回None。
 
 
-Sample Input 1                          Sample Output 1      
-4                                       [1,2]
+Sample Input 1                              
+4                                      
 2 7 11 15
 9
+Sample Output 1 
+[1,2]
 
-Sample Input 2                          Sample Output 2
-10                                      [1,9]
-2 5 11 8 1 7 4 16 13 3                  [3,7]
-15                                      [4,6]
-
-Sample Input 3                           Sample Output 3
-3                                        None
+Sample Input 2                         
+10                                      
+2 5 11 8 1 7 4 16 13 3                  
+15                                      
+Sample Output 2
+[1,9]
+[3,7]
+[4,6]
+Sample Input 3                           
+3                                       
 1 2 3
 2
-
+Sample Output 3
+None
