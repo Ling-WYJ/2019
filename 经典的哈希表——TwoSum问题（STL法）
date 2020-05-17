@@ -1,0 +1,60 @@
+#include<map>
+#include<hash_map>
+#include<iostream>
+
+using namespace std;
+using namespace __gnu_cxx;
+const int hash_size=10;
+class hash_function{
+    public:
+    size_t operator()(const int& key)const
+    {
+        return size_t(key%hash_size);
+    }
+};
+
+class key_compare{
+    public:
+    bool operator()(const int& key1,const int& key2)const{
+        return key1==key2;
+    }
+};
+
+
+int main()
+{
+    hash_map<int,int,hash_function,key_compare>myhash;
+    int k;
+    cin>>k;
+    int numbers[k];
+    for(int i=0;i<k;i++){
+        cin>>numbers[i];
+    }
+    int target=0;
+    cin>>target;
+
+    for(int i=0;i<k;i++)
+    {
+        myhash[numbers[i]]=i+1;
+    }
+    int num=0;
+    for(int i=0;i<k;i++)
+    {
+        int current_num=numbers[i];
+        int current_pos=i+1;
+
+        hash_map<int,int,hash_function,key_compare>::iterator it=myhash.find(target-current_num);
+        if(it!=myhash.end()){
+            if(it->second>current_pos){
+            num++;
+            cout<<"["<<current_pos<<","<<it->second<<"]"<<endl;
+            }
+
+
+        }
+    }
+    if(num==0){
+        cout<<"None"<<endl;
+    }
+    return 0;
+}
