@@ -1,0 +1,169 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <algorithm>
+#include <iterator>
+#include<iostream>
+#include<stack>
+#include<string>
+#include<vector>
+#include<queue>
+using namespace std;
+
+
+
+template<class Entry>
+struct Binary_node{
+    Entry data;
+    Binary_node<Entry>*left;
+    Binary_node<Entry>*right;
+    Binary_node()
+    {
+        this->left=NULL;
+        this->right=NULL;
+    }
+    Binary_node(const Entry&x)
+    {
+        this->data=x;
+        this->left=NULL;
+        this->right=NULL;
+    }
+};
+
+
+
+template<class type>
+class BinaryTree
+{
+    public:
+    //BinaryTree();
+    void BuildTree_levelorder(Binary_node<type>* &root,string &s);
+    bool is_Balanced(Binary_node<type>* root);
+    int height(Binary_node<type>* root,bool &is_balance);
+    Binary_node<type>* getParent(Binary_node<type>* root,type p,type q);
+    Binary_node<type>* get_root()
+    {
+        return root;
+    }
+    private:
+    Binary_node<type>* root;
+
+};
+
+template<class type>
+void BinaryTree<type>::BuildTree_levelorder(Binary_node<type>* &root,string &s)
+{
+    int index=0;
+    Binary_node<type>*tnode=NULL;
+    queue<Binary_node<type>*>qTree;
+    while(true){
+        if(index==s.size())
+        break;
+        if(index==0){
+            root=new Binary_node<type>(s[index]);//疑惑
+            qTree.push(root);
+            index++;
+        }
+        else{
+            tnode=qTree.front();
+            if(index==s.size())
+            break;
+            if(s[index]=='#')
+            tnode->left=NULL;
+            else
+            {
+                tnode->left=new Binary_node<type>(s[index]);
+                qTree.push(tnode->left);
+            }
+            index++;
+            if(index==s.size())
+            break;
+            if(s[index]=='#')
+            tnode->right=NULL;
+            else
+            {
+                tnode->right=new Binary_node<type>(s[index]);
+                qTree.push(tnode->right);
+            }
+            index++;
+            qTree.pop();
+        
+        }
+    }
+}
+
+template<class type>
+bool BinaryTree<type>::is_Balanced(Binary_node<type>* root)
+{
+    bool is_balance=false;
+    height(root,is_balance);
+    return is_balance;
+}
+
+template<class type>
+int BinaryTree<type>::height(Binary_node<type>* root,bool &is_balance)
+{
+    int lheight,rheight;
+    bool l_is_balance=false;
+    bool r_is_balance=false;
+    if(root==NULL)
+    {
+        is_balance=true;
+        return 0;
+    }
+    else
+    {
+        lheight=height(root->left,l_is_balance);
+        rheight=height(root->right,r_is_balance);
+        if(l_is_balance&&r_is_balance&&abs(lheight-rheight)<=1)
+        is_balance=true;
+        return max(lheight,rheight)+1;
+    }
+    
+}
+
+template<class type>
+Binary_node<type>* BinaryTree<type>::getParent(Binary_node<type>* root,type p,type q)
+{
+  if(root==NULL)
+  {
+      return NULL;
+  }
+  else if(root->data==p||root->data==q)
+  {
+      return root;
+  }
+  else
+  {
+      Binary_node<type>* lparent=getParent(root->left,p,q);
+      Binary_node<type>* rparent=getParent(root->right,p,q);
+      if(lparent!=NULL&&rparent!=NULL)
+      return root;
+      else if(lparent==NULL)
+      return rparent;
+      else
+      return lparent;
+      
+  }
+  
+}
+
+
+
+
+int main()
+{
+    BinaryTree<char>btree;
+    string s;
+    cin>>s;
+    Binary_node<char> *root=btree.get_root();
+    btree.BuildTree_levelorder(root,s);
+    if(btree.is_Balanced(root)==1)
+    cout<<"true"<<endl;
+    else
+    cout<<"false"<<endl;
+    char p;
+    char q;
+    cin>>p>>q;
+    Binary_node<char>* res=btree.getParent(root,p,q);
+    cout<<res->data;
+}
