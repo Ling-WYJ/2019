@@ -1,0 +1,164 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <algorithm>
+#include <iterator>
+#include<iostream>
+#include<stack>
+#include<string>
+#include<vector>
+using namespace std;
+
+class Node{
+  public:
+  int x;
+  int y;
+  public:
+  int getX(){
+      return x;
+  }
+  int getY(){
+      return y;
+  }
+  int setXY(int x,int y){
+   this->x=x;
+   this->y=y;
+  }
+};
+
+int compare(Node A,Node B)
+{
+    if(A.x>B.x)
+        return true;
+    else if(A.x==B.x&&A.y>B.y)
+        return true;
+    else
+        return false;    
+}
+
+class Heap{
+    public:
+    int size;
+    void heapSort(Node a[],int n);
+    void topk(Node a[],int right,int left);
+    void maxHeap(Node a[],int n);
+    void buildMaxHeap(Node a[],int n);
+    void print(Node b[],int k);
+};
+
+void Heap::heapSort(Node a[],int n){
+    int i;
+    buildMaxHeap(a,n);
+    for(i=size;i>1;i--)
+    {
+        swap(a[0],a[i-1]);
+        size=size-1;
+        maxHeap(a,1);
+    }
+}
+
+void Heap::topk(Node a[],int left,int right)
+{
+    if(left>=right)
+    return ;
+    int r=left;
+    int LChild=2*r+1;
+    int Child=LChild;
+    Node temp=a[r];
+    while(LChild<=right){
+        if(LChild<right && !compare(a[LChild],a[LChild-1]))
+          Child=LChild+1;
+        if(!compare(temp,a[Child]))
+        {
+            a[r]=a[Child];
+            r=Child;
+            LChild=2*r+1;
+            Child=LChild;
+        }
+        else
+            break;
+        
+    }
+    a[r]=temp;
+}
+
+void Heap::buildMaxHeap(Node a[],int n)
+{
+    int i=n/2;
+    for(i;i>0;i--)
+    maxHeap(a,i);
+}
+void Heap::maxHeap(Node a[],int n){
+    int leftChild,rightChild,largest;
+    leftChild=2*n;
+    rightChild=2*n+1;
+    if(leftChild<=size&&compare(a[leftChild-1],a[n-1]))
+     largest=leftChild;
+    else
+     largest=n;
+    if(rightChild<=size && compare(a[rightChild-1],a[largest-1]))
+     largest=rightChild;
+     if(largest!=n){
+         swap(a[n-1],a[largest-1]);
+         maxHeap(a,largest);
+     }     
+}
+
+void Heap::print(Node b[],int k)
+{
+
+   Node c[k];
+   for(int i=0;i<k;i++)
+    {
+        int x=b[i].getX();
+        int y=b[i].getY();
+       c[i].setXY(x,y);        
+    }
+    for(int i=0;i<k-1;i++)
+    {
+      for(int j=i+1;j<k;j++)
+      {
+          if(compare(c[i],c[j]))
+             swap(c[i],c[j]);
+      }
+    }
+
+    for(int i=0;i<k;i++)
+    {
+    
+        cout<<"("<<c[i].getX()<<","<<c[i].getY()<<")"<<endl;
+        
+    }
+}
+
+int main()
+{
+    Node a[100];
+    Node b[100];
+    Heap t;
+    int size=0;
+    int k;
+    cin>>size>>k;
+    t.size=size;
+    for(int i=0;i<k;i++)
+    {
+        b[i].setXY(1000,1000);
+    }
+    for(int i=0;i<size;i++)
+    {
+        int x,y;
+        cin>>x>>y;
+        a[i].setXY(x,y);
+   if(compare(b[0],a[i])){
+        b[0]=a[i];
+        t.topk(b,0,k-1);
+    }
+    if(i>=k-1)
+    
+        t.print(b,k);
+   
+    }
+    
+}
+   
+
+    
